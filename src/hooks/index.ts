@@ -5,7 +5,7 @@ import { TronProvider, TronContext } from './Tron'
 const useTron = () => { 
     const context = useContext(TronContext)
 
-    if(context){
+    if(!context){
         throw new Error('useTron must me used within a TronProvider');
     }
 

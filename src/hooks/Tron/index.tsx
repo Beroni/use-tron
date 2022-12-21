@@ -1,25 +1,57 @@
-import React, { createContext } from 'react'
+import React, { createContext, useEffect, useState } from 'react'
 
 import { ITron } from './types'
 
-const defaultData : ITron = {
-    connection:{
-        isConnected: false,
-        isInstalled: false,
+declare global {
+    interface Window {
+      tronWeb: any;
     }
-}
+  }
+  
 
-const TronContext = createContext<ITron>(defaultData)
+const TronContext = createContext<ITron>({} as ITron)
 
 const TronProvider: React.FC<{
     children?: React.ReactNode
 }> = ({children}) => {
-    const providerProps = {
-        value : defaultData,
-    }
+
+
+    const [isInstalled,setInstalled] = useState<boolean>(false)
+    const [isConnected,setIsConnected] = useState<boolean>(false)
+
+
+    useEffect(() => { 
+        const installedWatcher = setInterval(() => {
+            if(window.tronWeb){
+                setInstalled(true)
+                clearInterval(installedWatcher)
+            }
+        },2000)
+
+            return () => clearInterval(installedWatcher)
+
+    },[])
+
+    useEffect(() => { 
+        const connectedWatcher = setInterval(() => {
+            if(window.tronWeb && window.tronWeb.ready){
+                setIsConnected(true)
+                clearInterval(connectedWatcher)
+            }
+        },2000)
+
+            return () => clearInterval(connectedWatcher)
+
+    },[])
+
 
     return(
-        <TronContext.Provider {...providerProps}>{children}</TronContext.Provider>
+        <TronContext.Provider value={{
+            connection: {
+                isInstalled,
+                isConnected,
+            }
+        }}>{children}</TronContext.Provider>
     )
 }
 
