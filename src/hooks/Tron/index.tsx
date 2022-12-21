@@ -2,12 +2,6 @@ import React, { createContext, useEffect, useState } from 'react'
 
 import { ITron } from './types'
 
-declare global {
-    interface Window {
-      tronWeb: any;
-    }
-  }
-  
 
 const TronContext = createContext<ITron>({} as ITron)
 
